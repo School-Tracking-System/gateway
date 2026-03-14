@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/fercho/school-tracking/services/gateway/internal/infrastructure/api"
 	"github.com/fercho/school-tracking/services/gateway/pkg/env"
 	"github.com/fercho/school-tracking/services/gateway/pkg/logger"
 	"go.uber.org/fx"
@@ -11,8 +12,10 @@ func AppModule() fx.Option {
 	return fx.Options(
 		env.Module,
 		logger.Module,
+		fx.Provide(api.NewRouter),
+		fx.Invoke(api.StartHTTPServer),
 		fx.Invoke(func(l *zap.Logger, cfg *env.Config) {
-			l.Info("Starting gateway service", zap.String("port", cfg.Port), zap.String("env", cfg.Environment))
+			l.Info("Gateway service initialized", zap.String("port", cfg.Port), zap.String("env", cfg.Environment))
 		}),
 	)
 }

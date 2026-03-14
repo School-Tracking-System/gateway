@@ -6,8 +6,10 @@ import (
 )
 
 type Config struct {
-	Port        string `env:"PORT" envDefault:"8080"`
-	Environment string `env:"ENVIRONMENT" envDefault:"development"`
+	Port           string `env:"PORT" envDefault:"8000"`
+	Environment    string `env:"ENVIRONMENT" envDefault:"development"`
+	AuthServiceURL string `env:"AUTH_SERVICE_URL" envDefault:"http://localhost:8080"`
+	JWTSecret      string `env:"JWT_SECRET" envDefault:"dev-secret-change-in-prod"`
 }
 
 func NewConfig() (*Config, error) {
