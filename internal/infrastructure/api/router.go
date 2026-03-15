@@ -12,14 +12,16 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/fercho/school-tracking/services/gateway/internal/infrastructure/api/handlers"
+	"github.com/fercho/school-tracking/services/gateway/internal/infrastructure/api/middlewares"
 	"github.com/fercho/school-tracking/services/gateway/pkg/env"
 )
 
-func NewRouter(cfg *env.Config, log *zap.Logger) *chi.Mux {
+func NewRouter(cfg *env.Config, log *zap.Logger, fleetHandler *handlers.FleetHandler) *chi.Mux {
 	r := chi.NewRouter()
 
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
+	r.Use(middleware.Logger) // Added logger for better visibility
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(60 * time.Second))
 
@@ -46,6 +48,15 @@ func NewRouter(cfg *env.Config, log *zap.Logger) *chi.Mux {
 		} else {
 			log.Error("failed to create auth service proxy", zap.Error(err))
 		}
+
+		// Protected Fleet routes (Proxied via gRPC)
+		r.Route("/fleet", func(r chi.Router) {
+			r.Use(middlewares.RequireAuth(cfg))
+
+			r.Post("/vehicles", fleetHandler.CreateVehicle)
+			r.Get("/vehicles", fleetHandler.ListVehicles)
+			r.Get("/vehicles/{id}", fleetHandler.GetVehicle)
+		})
 	})
 
 	return r

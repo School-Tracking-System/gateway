@@ -9,6 +9,7 @@ type Config struct {
 	Port           string `env:"PORT" envDefault:"8000"`
 	Environment    string `env:"ENVIRONMENT" envDefault:"development"`
 	AuthServiceURL string `env:"AUTH_SERVICE_URL" envDefault:"http://localhost:8080"`
+	FleetServiceURL string `env:"FLEET_SERVICE_URL" envDefault:"localhost:9090"`
 	JWTSecret      string `env:"JWT_SECRET" envDefault:"dev-secret-change-in-prod"`
 }
 

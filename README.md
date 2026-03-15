@@ -36,8 +36,24 @@ El servicio utiliza el paquete `github.com/caarlos0/env/v10` para leer la config
 | :--- | :--- | :--- | :--- |
 | `PORT` | int | `8000` | Puerto en el que iniciará el servidor (evita conflicto con `8080`). |
 | `ENVIRONMENT` | string | `development` | Entorno de ejecución (`development`, `production`). |
-| `AUTH_SERVICE_URL` | string | `http://localhost:8080` | URL base del microservicio Auth para el proxy inverso. |
-| `JWT_SECRET` | string | `dev-secret-change-in-prod` | Secreto asimétrico/simétrico para validar la firma de los tokens JWT de autorización emitidos por `Auth`. |
+| `AUTH_SERVICE_URL` | string | `http://localhost:8080` | URL base del microservicio Auth (HTTP Proxy). |
+| `FLEET_SERVICE_URL` | string | `localhost:9090` | Endpoint gRPC del servicio de Fleet. |
+| `JWT_SECRET` | string | `dev-secret-change-in-prod` | Secreto para validar tokens JWT. |
+
+---
+
+## Endpoints y Ruteo
+
+| Ruta Gateway | Destino | Protocolo Interno |
+| :--- | :--- | :--- |
+| `/api/v1/auth/*` | Auth Service | HTTP (Reverse Proxy) |
+| `/api/v1/fleet/*` | Fleet Service | **gRPC** (Bridge) |
+
+### Fleet (Vehicles) a través del Gateway:
+El Gateway actúa como un traductor. Recibe JSON y llama al Fleet Service vía gRPC:
+- `POST /api/v1/fleet/vehicles`: Crear vehículo.
+- `GET /api/v1/fleet/vehicles`: Listar vehículos.
+- `GET /api/v1/fleet/vehicles/{id}`: Obtener vehículo por ID.
 
 ### Configuración de Seguridad para el JWT
 El `JWT_SECRET` configurado en el Gateway **debe ser exactamente el mismo** que utilizó el servicio `Auth` para firmar y emitir el token.
