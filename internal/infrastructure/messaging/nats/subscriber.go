@@ -2,13 +2,10 @@ package nats
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/fercho/school-tracking/services/gateway/internal/core/ports/resources"
 	"github.com/nats-io/nats.go"
-)
-
-const (
-	durableConsumer = "gateway-fleet"
 )
 
 type subscriber struct {
@@ -26,11 +23,14 @@ func NewSubscriber(nc *nats.Conn) (*subscriber, error) {
 }
 
 // Subscribe creates a durable JetStream push subscription for the given subject.
+// The durable consumer name is derived from the subject so each subscription gets
+// its own unique consumer (e.g. "fleet.vehicle.created" → "gateway-fleet-vehicle-created").
 func (s *subscriber) Subscribe(subject string, handler resources.EventHandler) error {
+	durable := "gateway-" + strings.ReplaceAll(subject, ".", "-")
 	sub, err := s.js.Subscribe(subject, func(msg *nats.Msg) {
 		handler(msg.Subject, msg.Data)
 		_ = msg.Ack()
-	}, nats.Durable(durableConsumer), nats.DeliverAll())
+	}, nats.Durable(durable), nats.DeliverAll())
 	if err != nil {
 		return fmt.Errorf("failed to subscribe to %s: %w", subject, err)
 	}
