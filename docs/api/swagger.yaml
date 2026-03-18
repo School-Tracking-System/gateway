@@ -1,9 +1,197 @@
 basePath: /api/v1
+definitions:
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CreateVehicleRequest:
+    properties:
+      brand:
+        example: Toyota
+        type: string
+      capacity:
+        example: 15
+        type: integer
+      chassis_num:
+        example: WDB9066351L123456
+        type: string
+      color:
+        example: White
+        type: string
+      insurance_exp:
+        example: "2026-12-31T00:00:00Z"
+        type: string
+      model:
+        example: Hiace
+        type: string
+      plate:
+        example: ABC-1234
+        type: string
+      tech_review_exp:
+        example: "2026-06-30T00:00:00Z"
+        type: string
+      vehicle_type:
+        example: van
+        type: string
+      year:
+        example: 2024
+        type: integer
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse:
+    properties:
+      error:
+        example: invalid request body
+        type: string
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListVehiclesResponse:
+    properties:
+      total_count:
+        example: 42
+        type: integer
+      vehicles:
+        items:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.VehicleResponse'
+        type: array
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.VehicleResponse:
+    properties:
+      brand:
+        example: Toyota
+        type: string
+      capacity:
+        example: 15
+        type: integer
+      chassis_num:
+        example: WDB9066351L123456
+        type: string
+      color:
+        example: White
+        type: string
+      created_at:
+        example: "2024-01-01T00:00:00Z"
+        type: string
+      id:
+        example: 550e8400-e29b-41d4-a716-446655440000
+        type: string
+      insurance_exp:
+        example: "2026-12-31T00:00:00Z"
+        type: string
+      model:
+        example: Hiace
+        type: string
+      plate:
+        example: ABC-1234
+        type: string
+      status:
+        example: active
+        type: string
+      tech_review_exp:
+        example: "2026-06-30T00:00:00Z"
+        type: string
+      updated_at:
+        example: "2024-01-01T00:00:00Z"
+        type: string
+      vehicle_type:
+        example: van
+        type: string
+      year:
+        example: 2024
+        type: integer
+    type: object
 host: localhost:8080
 info:
   contact: {}
   description: API documentation for the gateway service of the School Tracking System.
   title: Gateway Service API
   version: "1.0"
-paths: {}
+paths:
+  /fleet/vehicles:
+    get:
+      description: Retrieve a paginated list of vehicles in the fleet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListVehiclesResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List all vehicles
+      tags:
+      - fleet
+    post:
+      consumes:
+      - application/json
+      description: Register a new vehicle in the fleet
+      parameters:
+      - description: Create Vehicle Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CreateVehicleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.VehicleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new vehicle
+      tags:
+      - fleet
+  /fleet/vehicles/{id}:
+    get:
+      description: Retrieve a single vehicle by its UUID
+      parameters:
+      - description: Vehicle UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.VehicleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a vehicle by ID
+      tags:
+      - fleet
+securityDefinitions:
+  BearerAuth:
+    description: 'JWT token in the format: Bearer {token}'
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

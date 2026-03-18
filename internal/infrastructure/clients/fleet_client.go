@@ -43,4 +43,3 @@ func NewFleetClient(lc fx.Lifecycle, cfg *env.Config, log *zap.Logger) (pb.Vehic
 	return client, nil
 }
 
-var Module = fx.Provide(NewFleetClient)

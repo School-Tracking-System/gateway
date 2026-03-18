@@ -9,6 +9,10 @@ import (
 // @description     API documentation for the gateway service of the School Tracking System.
 // @host            localhost:8080
 // @BasePath        /api/v1
+// @securityDefinitions.apikey BearerAuth
+// @in              header
+// @name            Authorization
+// @description     JWT token in the format: Bearer {token}
 func main() {
 	fx.New(AppModule()).Run()
 }

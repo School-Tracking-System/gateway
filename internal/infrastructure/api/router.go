@@ -11,12 +11,15 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 
+	authpb "github.com/fercho/school-tracking/proto/gen/auth/v1"
+	_ "github.com/fercho/school-tracking/services/gateway/docs/api"
 	"github.com/fercho/school-tracking/services/gateway/internal/infrastructure/api/handlers"
 	"github.com/fercho/school-tracking/services/gateway/internal/infrastructure/api/middlewares"
 	"github.com/fercho/school-tracking/services/gateway/pkg/env"
+	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
-func NewRouter(cfg *env.Config, log *zap.Logger, fleetHandler *handlers.FleetHandler) *chi.Mux {
+func NewRouter(cfg *env.Config, log *zap.Logger, fleetHandler *handlers.FleetHandler, authClient authpb.AuthServiceClient) *chi.Mux {
 	r := chi.NewRouter()
 
 	r.Use(middleware.RequestID)
@@ -35,6 +38,11 @@ func NewRouter(cfg *env.Config, log *zap.Logger, fleetHandler *handlers.FleetHan
 		MaxAge:           300,
 	}))
 
+	// Swagger UI
+	r.Get("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL("/swagger/doc.json"),
+	))
+
 	r.Route("/api/v1", func(r chi.Router) {
 		r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
@@ -51,7 +59,7 @@ func NewRouter(cfg *env.Config, log *zap.Logger, fleetHandler *handlers.FleetHan
 
 		// Protected Fleet routes (Proxied via gRPC)
 		r.Route("/fleet", func(r chi.Router) {
-			r.Use(middlewares.RequireAuth(cfg))
+			r.Use(middlewares.RequireAuth(cfg, authClient))
 
 			r.Post("/vehicles", fleetHandler.CreateVehicle)
 			r.Get("/vehicles", fleetHandler.ListVehicles)

@@ -14,7 +14,286 @@ const docTemplate = `{
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {}
+    "paths": {
+        "/fleet/vehicles": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieve a paginated list of vehicles in the fleet",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "List all vehicles",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListVehiclesResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Register a new vehicle in the fleet",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "Create a new vehicle",
+                "parameters": [
+                    {
+                        "description": "Create Vehicle Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CreateVehicleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.VehicleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/fleet/vehicles/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieve a single vehicle by its UUID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "Get a vehicle by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Vehicle UUID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.VehicleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CreateVehicleRequest": {
+            "type": "object",
+            "properties": {
+                "brand": {
+                    "type": "string",
+                    "example": "Toyota"
+                },
+                "capacity": {
+                    "type": "integer",
+                    "example": 15
+                },
+                "chassis_num": {
+                    "type": "string",
+                    "example": "WDB9066351L123456"
+                },
+                "color": {
+                    "type": "string",
+                    "example": "White"
+                },
+                "insurance_exp": {
+                    "type": "string",
+                    "example": "2026-12-31T00:00:00Z"
+                },
+                "model": {
+                    "type": "string",
+                    "example": "Hiace"
+                },
+                "plate": {
+                    "type": "string",
+                    "example": "ABC-1234"
+                },
+                "tech_review_exp": {
+                    "type": "string",
+                    "example": "2026-06-30T00:00:00Z"
+                },
+                "vehicle_type": {
+                    "type": "string",
+                    "example": "van"
+                },
+                "year": {
+                    "type": "integer",
+                    "example": 2024
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "invalid request body"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListVehiclesResponse": {
+            "type": "object",
+            "properties": {
+                "total_count": {
+                    "type": "integer",
+                    "example": 42
+                },
+                "vehicles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.VehicleResponse"
+                    }
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.VehicleResponse": {
+            "type": "object",
+            "properties": {
+                "brand": {
+                    "type": "string",
+                    "example": "Toyota"
+                },
+                "capacity": {
+                    "type": "integer",
+                    "example": 15
+                },
+                "chassis_num": {
+                    "type": "string",
+                    "example": "WDB9066351L123456"
+                },
+                "color": {
+                    "type": "string",
+                    "example": "White"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2024-01-01T00:00:00Z"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                },
+                "insurance_exp": {
+                    "type": "string",
+                    "example": "2026-12-31T00:00:00Z"
+                },
+                "model": {
+                    "type": "string",
+                    "example": "Hiace"
+                },
+                "plate": {
+                    "type": "string",
+                    "example": "ABC-1234"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "active"
+                },
+                "tech_review_exp": {
+                    "type": "string",
+                    "example": "2026-06-30T00:00:00Z"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2024-01-01T00:00:00Z"
+                },
+                "vehicle_type": {
+                    "type": "string",
+                    "example": "van"
+                },
+                "year": {
+                    "type": "integer",
+                    "example": 2024
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "JWT token in the format: Bearer {token}",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it

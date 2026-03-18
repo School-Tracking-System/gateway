@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
+	authpb "github.com/fercho/school-tracking/proto/gen/auth/v1"
 	"github.com/fercho/school-tracking/services/gateway/pkg/env"
-	"github.com/golang-jwt/jwt/v5"
 )
 
 type contextKey string
@@ -17,7 +17,7 @@ const (
 )
 
 // RequireAuth is a middleware that validates JWT tokens and injects claims into the request headers and context.
-func RequireAuth(cfg *env.Config) func(http.Handler) http.Handler {
+func RequireAuth(cfg *env.Config, authClient authpb.AuthServiceClient) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			authHeader := r.Header.Get("Authorization")
@@ -34,29 +34,18 @@ func RequireAuth(cfg *env.Config) func(http.Handler) http.Handler {
 
 			tokenString := parts[1]
 
-			// Parse and validate the token
-			token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-				// Validate the alg is what we expect
-				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-					return nil, jwt.ErrSignatureInvalid
-				}
-				return []byte(cfg.JWTSecret), nil
+			// Validate the token via Auth gRPC Service
+			resp, err := authClient.ValidateToken(r.Context(), &authpb.ValidateTokenRequest{
+				AccessToken: tokenString,
 			})
 
-			if err != nil || !token.Valid {
+			if err != nil || !resp.IsValid {
 				http.Error(w, "invalid or expired token", http.StatusUnauthorized)
 				return
 			}
 
-			// Extract claims
-			claims, ok := token.Claims.(jwt.MapClaims)
-			if !ok {
-				http.Error(w, "invalid token claims", http.StatusUnauthorized)
-				return
-			}
-
-			userID, _ := claims["sub"].(string)
-			role, _ := claims["role"].(string)
+			userID := resp.UserId
+			role := resp.Role
 
 			if userID == "" || role == "" {
 				http.Error(w, "missing required claims in token", http.StatusUnauthorized)
