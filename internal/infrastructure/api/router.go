@@ -19,12 +19,19 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
-func NewRouter(cfg *env.Config, log *zap.Logger, fleetHandler *handlers.FleetHandler, authClient authpb.AuthServiceClient) *chi.Mux {
+func NewRouter(
+	cfg *env.Config,
+	log *zap.Logger,
+	authClient authpb.AuthServiceClient,
+	fleetHandler *handlers.FleetHandler,
+	tripHandler *handlers.TripHandler,
+	notificationHandler *handlers.NotificationHandler,
+) *chi.Mux {
 	r := chi.NewRouter()
 
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
-	r.Use(middleware.Logger) // Added logger for better visibility
+	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(60 * time.Second))
 
@@ -49,7 +56,7 @@ func NewRouter(cfg *env.Config, log *zap.Logger, fleetHandler *handlers.FleetHan
 			_, _ = w.Write([]byte("gateway is healthy"))
 		})
 
-		// Public Auth routes proxy
+		// Public Auth routes proxy (Since gRPC doesn't have login/register yet)
 		authProxy, err := handlers.NewReverseProxy(cfg.AuthServiceURL, "")
 		if err == nil {
 			r.Mount("/auth", authProxy)
@@ -57,13 +64,72 @@ func NewRouter(cfg *env.Config, log *zap.Logger, fleetHandler *handlers.FleetHan
 			log.Error("failed to create auth service proxy", zap.Error(err))
 		}
 
-		// Protected Fleet routes (Proxied via gRPC)
+		// Protected Fleet routes
 		r.Route("/fleet", func(r chi.Router) {
 			r.Use(middlewares.RequireAuth(cfg, authClient))
 
+			// Vehicles
 			r.Post("/vehicles", fleetHandler.CreateVehicle)
 			r.Get("/vehicles", fleetHandler.ListVehicles)
 			r.Get("/vehicles/{id}", fleetHandler.GetVehicle)
+
+			// Schools
+			r.Post("/schools", fleetHandler.CreateSchool)
+			r.Get("/schools", fleetHandler.ListSchools)
+			r.Get("/schools/{id}", fleetHandler.GetSchool)
+			r.Put("/schools/{id}", fleetHandler.UpdateSchool)
+
+			// Drivers
+			r.Post("/drivers", fleetHandler.RegisterDriver)
+			r.Get("/drivers", fleetHandler.ListDrivers)
+			r.Get("/drivers/{id}", fleetHandler.GetDriver)
+			r.Put("/drivers/{id}", fleetHandler.UpdateDriver)
+
+			// Students
+			r.Post("/students", fleetHandler.RegisterStudent)
+			r.Get("/students", fleetHandler.ListStudents)
+			r.Get("/students/{id}", fleetHandler.GetStudent)
+			r.Put("/students/{id}", fleetHandler.UpdateStudent)
+			r.Delete("/students/{id}", fleetHandler.DeactivateStudent)
+			r.Get("/students/{student_id}/guardians", fleetHandler.GetGuardiansByStudent)
+
+			// Guardians
+			r.Post("/guardians", fleetHandler.LinkGuardian)
+			r.Delete("/guardians/{id}", fleetHandler.UnlinkGuardian)
+
+			// Routes
+			r.Post("/routes", fleetHandler.CreateRoute)
+			r.Get("/routes", fleetHandler.ListRoutes)
+			r.Get("/routes/{id}", fleetHandler.GetRoute)
+			r.Put("/routes/{id}", fleetHandler.UpdateRoute)
+			r.Post("/routes/{id}/stops", fleetHandler.AddStop)
+			r.Get("/routes/{id}/stops", fleetHandler.GetRouteStops)
+			r.Delete("/routes/{id}/stops/{stop_id}", fleetHandler.RemoveStop)
+		})
+
+		// Protected Trip routes
+		r.Route("/trips", func(r chi.Router) {
+			r.Use(middlewares.RequireAuth(cfg, authClient))
+
+			r.Post("/", tripHandler.StartTrip)
+			r.Put("/{id}/end", tripHandler.EndTrip)
+			r.Get("/{id}", tripHandler.GetTrip)
+			r.Get("/", tripHandler.ListTrips)
+			r.Get("/active", tripHandler.ListActiveTrips)
+
+			r.Post("/{id}/checkins", tripHandler.CheckinStudent)
+			r.Get("/{id}/checkins", tripHandler.GetTripCheckins)
+		})
+
+		// Protected Notification routes
+		r.Route("/notifications", func(r chi.Router) {
+			r.Use(middlewares.RequireAuth(cfg, authClient))
+
+			r.Post("/push", notificationHandler.SendPush)
+			r.Post("/sms", notificationHandler.SendSMS)
+			r.Get("/{id}", notificationHandler.GetNotification)
+			r.Get("/", notificationHandler.ListNotifications)
+			r.Post("/retry", notificationHandler.RetryFailed)
 		})
 	})
 

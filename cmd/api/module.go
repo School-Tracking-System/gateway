@@ -18,6 +18,7 @@ func AppModule() fx.Option {
 		messaging.Module,
 		clients.Module, // Provides FleetClient (grpc)
 		fx.Provide(handlers.NewFleetHandler),
+		fx.Provide(handlers.NewTripHandler),		fx.Provide(handlers.NewNotificationHandler),
 		fx.Provide(api.NewRouter),
 		fx.Invoke(api.StartHTTPServer),
 		fx.Invoke(func(l *zap.Logger, cfg *env.Config) {

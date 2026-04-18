@@ -10,8 +10,10 @@ type Config struct {
 	Environment     string `env:"ENVIRONMENT" envDefault:"development"`
 	AuthServiceURL  string `env:"AUTH_SERVICE_URL" envDefault:"http://localhost:8080"`
 	AuthGRPCURL     string `env:"AUTH_GRPC_URL" envDefault:"localhost:9090"`
-	FleetServiceURL string `env:"FLEET_SERVICE_URL" envDefault:"localhost:9090"`
-	JWTSecret       string `env:"JWT_SECRET" envDefault:"dev-secret-change-in-prod"`
+	FleetServiceURL        string `env:"FLEET_SERVICE_URL" envDefault:"localhost:9090"`
+	TripServiceURL         string `env:"TRIP_SERVICE_URL" envDefault:"localhost:9092"`
+	NotificationServiceURL string `env:"NOTIFICATION_SERVICE_URL" envDefault:"localhost:9095"`
+	JWTSecret              string `env:"JWT_SECRET" envDefault:"dev-secret-change-in-prod"`
 	NatsURL         string `env:"NATS_URL" envDefault:"nats://localhost:4222"`
 }
 

@@ -5,4 +5,6 @@ import "go.uber.org/fx"
 var Module = fx.Options(
 	fx.Provide(NewFleetClient),
 	fx.Provide(NewAuthClient),
+	fx.Provide(NewTripClient),
+	fx.Provide(NewNotificationClient),
 )

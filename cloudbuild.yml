@@ -1,0 +1,77 @@
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    id: "build-gateway"
+    args:
+      [
+        "build",
+        "-t",
+        "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/gateway:$SHORT_SHA",
+        "-t",
+        "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/gateway:latest",
+        "-f",
+        "services/gateway/Dockerfile",
+        "--platform=linux/amd64",
+        ".",
+      ]
+
+  - name: "gcr.io/cloud-builders/docker"
+    id: "push-gateway-sha"
+    args:
+      [
+        "push",
+        "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/gateway:$SHORT_SHA",
+      ]
+
+  - name: "gcr.io/cloud-builders/docker"
+    id: "push-gateway-latest"
+    args:
+      [
+        "push",
+        "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/gateway:latest",
+      ]
+
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: "get-gke-credentials"
+    args:
+      [
+        "container",
+        "clusters",
+        "get-credentials",
+        "${_GKE_CLUSTER}",
+        "--region",
+        "${_GKE_REGION}",
+        "--project",
+        "$PROJECT_ID",
+      ]
+
+  - name: "gcr.io/cloud-builders/kubectl"
+    id: "set-gateway-image"
+    env:
+      - "CLOUDSDK_COMPUTE_REGION=${_GKE_REGION}"
+      - "CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}"
+    args:
+      [
+        "set",
+        "image",
+        "deployment/gateway-service",
+        "gateway-service=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/gateway:$SHORT_SHA",
+        "-n",
+        "${_K8S_NAMESPACE}",
+      ]
+
+  - name: "gcr.io/cloud-builders/kubectl"
+    id: "rollout-gateway"
+    env:
+      - "CLOUDSDK_COMPUTE_REGION=${_GKE_REGION}"
+      - "CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}"
+    args: ["rollout", "status", "deployment/gateway-service", "-n", "${_K8S_NAMESPACE}"]
+
+substitutions:
+  _REGION: "us-east4"
+  _AR_REPOSITORY: "image-register"
+  _GKE_REGION: "us-east4"
+  _GKE_CLUSTER: "CHANGE_ME_CLUSTER_NAME"
+  _K8S_NAMESPACE: "school-tracking"
+
+options:
+  logging: CLOUD_LOGGING_ONLY

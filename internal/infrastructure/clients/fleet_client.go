@@ -12,34 +12,46 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-// FleetClient wraps the gRPC client for the Fleet service
-type FleetClient struct {
-	Vehicles pb.VehicleServiceClient
-	conn     *grpc.Server
+// FleetClients groups all gRPC service clients for the Fleet service.
+// Using fx.Out allows fx to inject each client type independently.
+type FleetClients struct {
+	fx.Out
+
+	Vehicles  pb.VehicleServiceClient
+	Schools   pb.SchoolServiceClient
+	Drivers   pb.DriverServiceClient
+	Students  pb.StudentServiceClient
+	Guardians pb.GuardianServiceClient
+	Routes    pb.RouteServiceClient
 }
 
-func NewFleetClient(lc fx.Lifecycle, cfg *env.Config, log *zap.Logger) (pb.VehicleServiceClient, error) {
+// NewFleetClient opens a single gRPC connection to the Fleet service and
+// creates clients for all its sub-services.
+func NewFleetClient(lc fx.Lifecycle, cfg *env.Config, log *zap.Logger) (FleetClients, error) {
 	addr := cfg.FleetServiceURL
-	
-	// Create connection with insecure credentials (for now)
+
 	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		return nil, fmt.Errorf("failed to connect to fleet service: %w", err)
+		return FleetClients{}, fmt.Errorf("failed to connect to fleet service at %s: %w", addr, err)
 	}
 
-	client := pb.NewVehicleServiceClient(conn)
-
 	lc.Append(fx.Hook{
-		OnStart: func(ctx context.Context) error {
-			log.Info("Connecting to Fleet service", zap.String("addr", addr))
+		OnStart: func(_ context.Context) error {
+			log.Info("Connected to Fleet gRPC service", zap.String("addr", addr))
 			return nil
 		},
-		OnStop: func(ctx context.Context) error {
-			log.Info("Closing connection to Fleet service")
+		OnStop: func(_ context.Context) error {
+			log.Info("Closing Fleet gRPC connection")
 			return conn.Close()
 		},
 	})
 
-	return client, nil
+	return FleetClients{
+		Vehicles:  pb.NewVehicleServiceClient(conn),
+		Schools:   pb.NewSchoolServiceClient(conn),
+		Drivers:   pb.NewDriverServiceClient(conn),
+		Students:  pb.NewStudentServiceClient(conn),
+		Guardians: pb.NewGuardianServiceClient(conn),
+		Routes:    pb.NewRouteServiceClient(conn),
+	}, nil
 }
-

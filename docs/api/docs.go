@@ -15,6 +15,1099 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/auth/login": {
+            "post": {
+                "description": "Authenticate user credentials and return JWT tokens",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Login user",
+                "parameters": [
+                    {
+                        "description": "Login Credentials",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.AuthResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/refresh": {
+            "post": {
+                "description": "Get a new access token using a valid refresh token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Refresh tokens",
+                "parameters": [
+                    {
+                        "description": "Refresh Token",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RefreshTokenRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.AuthResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "description": "Create a new user account (Driver, Guardian, or Admin)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Register new user",
+                "parameters": [
+                    {
+                        "description": "User Registration Data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.AuthResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/fleet/drivers": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieve a paginated list of drivers",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "List drivers",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Limit (default 10)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListDriversResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Register a new driver linked to an Auth service user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "Register a driver",
+                "parameters": [
+                    {
+                        "description": "Register Driver Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RegisterDriverRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.DriverResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/fleet/drivers/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieve driver details",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "Get a driver by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Driver UUID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.DriverResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Modify driver details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "Update a driver",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Driver UUID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update Driver Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.UpdateDriverRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.DriverResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/fleet/guardians": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a relationship between a user (guardian role) and a student",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "Link a guardian to a student",
+                "parameters": [
+                    {
+                        "description": "Link Guardian Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LinkGuardianRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.GuardianResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/fleet/guardians/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Remove the relationship between a guardian and a student",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "Unlink a guardian",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Guardian Relationship UUID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/fleet/routes": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieve a paginated list of routes",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "List routes",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Limit (default 10)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListRoutesResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Register a new school transport route",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "Create a route",
+                "parameters": [
+                    {
+                        "description": "Create Route Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CreateRouteRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RouteResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/fleet/routes/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieve route info and its stops",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "Get route details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Route UUID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RouteResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Modify route basic info or assignments",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "Update a route",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Route UUID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update Route Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.UpdateRouteRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RouteResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/fleet/routes/{id}/stops": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieve all stops for a specific route",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "Get route stops",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Route UUID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.StopDTO"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new stop for a student in a route",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "Add a stop to a route",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Route UUID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Add Stop Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.AddStopRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.StopDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/fleet/routes/{id}/stops/{stop_id}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete a stop from a route",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "Remove a stop",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Route UUID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Stop UUID",
+                        "name": "stop_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/fleet/schools": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieve a paginated list of schools",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "List schools",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Limit (default 10)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListSchoolsResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Register a new school in the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "Create a new school",
+                "parameters": [
+                    {
+                        "description": "Create School Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CreateSchoolRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.SchoolResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/fleet/schools/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieve school details by its UUID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "Get a school by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "School UUID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.SchoolResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Modify school details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "Update a school",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "School UUID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update School Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.UpdateSchoolRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.SchoolResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/fleet/students": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieve a paginated list of students",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "List students",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Limit (default 10)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListStudentsResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new student record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "Register a student",
+                "parameters": [
+                    {
+                        "description": "Register Student Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RegisterStudentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.StudentResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/fleet/students/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieve student details by UUID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "Get a student by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Student UUID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.StudentResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Modify student details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "Update a student",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Student UUID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update Student Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.UpdateStudentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.StudentResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Mark a student as inactive",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "Deactivate a student",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Student UUID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/fleet/students/{student_id}/guardians": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "List all guardians linked to a specific student",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fleet"
+                ],
+                "summary": "Get student guardians",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Student UUID",
+                        "name": "student_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.GuardianResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/fleet/vehicles": {
             "get": {
                 "security": [
@@ -30,17 +1123,25 @@ const docTemplate = `{
                     "fleet"
                 ],
                 "summary": "List all vehicles",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Limit (default 10)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListVehiclesResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
                         }
                     }
                 }
@@ -85,18 +1186,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
                         }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
-                        }
                     }
                 }
             }
@@ -132,6 +1221,307 @@ const docTemplate = `{
                             "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.VehicleResponse"
                         }
                     },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/notifications": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieve a paginated list of notification logs",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "List notifications",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Limit (default 10)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by User ID",
+                        "name": "user_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by Status",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListNotificationsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/notifications/push": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Enqueue a new push notification via FCM",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "Send a push notification",
+                "parameters": [
+                    {
+                        "description": "Push Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.SendPushRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.NotificationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/notifications/retry": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Manually trigger a retry for all notifications in 'failed' status",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "Retry failed notifications",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/notifications/sms": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Enqueue a new SMS via Twilio",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "Send an SMS notification",
+                "parameters": [
+                    {
+                        "description": "SMS Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.SendSMSRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.NotificationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/notifications/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieve a notification log entry by UUID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "Get notification details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Notification UUID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.NotificationResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/trips": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Paginated list of trips, filterable by status or route",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trips"
+                ],
+                "summary": "List trips",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Limit results (default 10)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset results (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by status",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by Route ID",
+                        "name": "route_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListTripsResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new trip instance based on a route ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trips"
+                ],
+                "summary": "Start a new trip",
+                "parameters": [
+                    {
+                        "description": "Start Trip Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.StartTripRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.TripResponse"
+                        }
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
@@ -140,6 +1530,212 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/trips/active": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieve all trips currently in progress",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trips"
+                ],
+                "summary": "List active trips",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.TripResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/trips/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieve full trip data by UUID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trips"
+                ],
+                "summary": "Get trip details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Trip UUID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.TripResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/trips/{id}/checkins": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieve all student check-in events for a specific trip",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trips"
+                ],
+                "summary": "Get trip check-ins",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Trip UUID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CheckinResponse"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Register a boarding/exiting event for a student on a trip",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trips"
+                ],
+                "summary": "Student check-in",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Trip UUID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Checkin Data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CheckinRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CheckinResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/trips/{id}/end": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Mark an in-progress trip as completed",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trips"
+                ],
+                "summary": "End a trip",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Trip UUID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "End Trip Request",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.EndTripRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.TripResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse"
                         }
@@ -155,48 +1751,212 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CreateVehicleRequest": {
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.AddStopRequest": {
+            "type": "object",
+            "required": [
+                "student_id"
+            ],
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "est_time": {
+                    "type": "string"
+                },
+                "location": {
+                    "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "student_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.AuthResponse": {
             "type": "object",
             "properties": {
-                "brand": {
+                "access_token": {
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.UserResponse"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CheckinRequest": {
+            "type": "object",
+            "required": [
+                "action",
+                "student_id"
+            ],
+            "properties": {
+                "action": {
                     "type": "string",
-                    "example": "Toyota"
+                    "enum": [
+                        "board",
+                        "exit",
+                        "school_recv"
+                    ]
+                },
+                "location": {
+                    "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO"
+                },
+                "student_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CheckinResponse": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "location": {
+                    "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO"
+                },
+                "student_id": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                },
+                "trip_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CreateRouteRequest": {
+            "type": "object",
+            "required": [
+                "direction",
+                "name",
+                "schedule_time",
+                "school_id"
+            ],
+            "properties": {
+                "direction": {
+                    "type": "string"
+                },
+                "driver_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "schedule_time": {
+                    "type": "string"
+                },
+                "school_id": {
+                    "type": "string"
+                },
+                "vehicle_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CreateSchoolRequest": {
+            "type": "object",
+            "required": [
+                "address",
+                "name"
+            ],
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "location": {
+                    "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CreateVehicleRequest": {
+            "type": "object",
+            "required": [
+                "brand",
+                "model",
+                "plate"
+            ],
+            "properties": {
+                "brand": {
+                    "type": "string"
                 },
                 "capacity": {
-                    "type": "integer",
-                    "example": 15
+                    "type": "integer"
                 },
                 "chassis_num": {
-                    "type": "string",
-                    "example": "WDB9066351L123456"
+                    "type": "string"
                 },
                 "color": {
-                    "type": "string",
-                    "example": "White"
+                    "type": "string"
                 },
                 "insurance_exp": {
-                    "type": "string",
-                    "example": "2026-12-31T00:00:00Z"
+                    "description": "RFC3339",
+                    "type": "string"
                 },
                 "model": {
-                    "type": "string",
-                    "example": "Hiace"
+                    "type": "string"
                 },
                 "plate": {
-                    "type": "string",
-                    "example": "ABC-1234"
+                    "type": "string"
                 },
                 "tech_review_exp": {
-                    "type": "string",
-                    "example": "2026-06-30T00:00:00Z"
+                    "description": "RFC3339",
+                    "type": "string"
                 },
                 "vehicle_type": {
-                    "type": "string",
-                    "example": "van"
+                    "type": "string"
                 },
                 "year": {
-                    "type": "integer",
-                    "example": 2024
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.DriverResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "license_expiry": {
+                    "type": "string"
+                },
+                "license_number": {
+                    "type": "string"
+                },
+                "license_type": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.EndTripRequest": {
+            "type": "object",
+            "properties": {
+                "end_location": {
+                    "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO"
                 }
             }
         },
@@ -209,12 +1969,137 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.GuardianResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "is_primary": {
+                    "type": "boolean"
+                },
+                "relation": {
+                    "type": "string"
+                },
+                "student_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LinkGuardianRequest": {
+            "type": "object",
+            "required": [
+                "relation",
+                "student_id",
+                "user_id"
+            ],
+            "properties": {
+                "is_primary": {
+                    "type": "boolean"
+                },
+                "relation": {
+                    "type": "string"
+                },
+                "student_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListDriversResponse": {
+            "type": "object",
+            "properties": {
+                "drivers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.DriverResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListNotificationsResponse": {
+            "type": "object",
+            "properties": {
+                "notifications": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.NotificationResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListRoutesResponse": {
+            "type": "object",
+            "properties": {
+                "routes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RouteResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListSchoolsResponse": {
+            "type": "object",
+            "properties": {
+                "schools": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.SchoolResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListStudentsResponse": {
+            "type": "object",
+            "properties": {
+                "students": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.StudentResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListTripsResponse": {
+            "type": "object",
+            "properties": {
+                "total": {
+                    "type": "integer"
+                },
+                "trips": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.TripResponse"
+                    }
+                }
+            }
+        },
         "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListVehiclesResponse": {
             "type": "object",
             "properties": {
-                "total_count": {
-                    "type": "integer",
-                    "example": 42
+                "total": {
+                    "type": "integer"
                 },
                 "vehicles": {
                     "type": "array",
@@ -224,64 +2109,493 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO": {
+            "type": "object",
+            "properties": {
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LoginRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "secret123"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.NotificationResponse": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "channel": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "sent_at": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RefreshTokenRequest": {
+            "type": "object",
+            "required": [
+                "refresh_token"
+            ],
+            "properties": {
+                "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RegisterDriverRequest": {
+            "type": "object",
+            "required": [
+                "license_number",
+                "user_id"
+            ],
+            "properties": {
+                "license_expiry": {
+                    "description": "RFC3339",
+                    "type": "string"
+                },
+                "license_number": {
+                    "type": "string"
+                },
+                "license_type": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RegisterRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "first_name",
+                "last_name",
+                "password",
+                "role"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 8
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string",
+                    "example": "guardian"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RegisterStudentRequest": {
+            "type": "object",
+            "required": [
+                "first_name",
+                "last_name",
+                "school_id"
+            ],
+            "properties": {
+                "first_name": {
+                    "type": "string"
+                },
+                "grade": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "pickup_address": {
+                    "type": "string"
+                },
+                "pickup_location": {
+                    "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO"
+                },
+                "school_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RouteResponse": {
+            "type": "object",
+            "properties": {
+                "direction": {
+                    "type": "string"
+                },
+                "driver_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "schedule_time": {
+                    "type": "string"
+                },
+                "stops": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.StopDTO"
+                    }
+                },
+                "vehicle_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.SchoolResponse": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "location": {
+                    "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.SendPushRequest": {
+            "type": "object",
+            "required": [
+                "body",
+                "title",
+                "user_id"
+            ],
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.SendSMSRequest": {
+            "type": "object",
+            "required": [
+                "body",
+                "user_id"
+            ],
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.StartTripRequest": {
+            "type": "object",
+            "required": [
+                "route_id"
+            ],
+            "properties": {
+                "route_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.StopDTO": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "est_time": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "location": {
+                    "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "student_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.StudentResponse": {
+            "type": "object",
+            "properties": {
+                "first_name": {
+                    "type": "string"
+                },
+                "grade": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "pickup_address": {
+                    "type": "string"
+                },
+                "pickup_location": {
+                    "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO"
+                },
+                "school_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.TripResponse": {
+            "type": "object",
+            "properties": {
+                "driver_id": {
+                    "type": "string"
+                },
+                "end_location": {
+                    "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO"
+                },
+                "ended_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "route_id": {
+                    "type": "string"
+                },
+                "start_location": {
+                    "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO"
+                },
+                "started_at": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "vehicle_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.UpdateDriverRequest": {
+            "type": "object",
+            "properties": {
+                "license_expiry": {
+                    "type": "string"
+                },
+                "license_number": {
+                    "type": "string"
+                },
+                "license_type": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.UpdateRouteRequest": {
+            "type": "object",
+            "properties": {
+                "direction": {
+                    "type": "string"
+                },
+                "driver_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "schedule_time": {
+                    "type": "string"
+                },
+                "vehicle_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.UpdateSchoolRequest": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "location": {
+                    "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.UpdateStudentRequest": {
+            "type": "object",
+            "properties": {
+                "first_name": {
+                    "type": "string"
+                },
+                "grade": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "pickup_address": {
+                    "type": "string"
+                },
+                "pickup_location": {
+                    "$ref": "#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO"
+                }
+            }
+        },
+        "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.UserResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.VehicleResponse": {
             "type": "object",
             "properties": {
                 "brand": {
-                    "type": "string",
-                    "example": "Toyota"
+                    "type": "string"
                 },
                 "capacity": {
-                    "type": "integer",
-                    "example": 15
+                    "type": "integer"
                 },
                 "chassis_num": {
-                    "type": "string",
-                    "example": "WDB9066351L123456"
+                    "type": "string"
                 },
                 "color": {
-                    "type": "string",
-                    "example": "White"
+                    "type": "string"
                 },
                 "created_at": {
-                    "type": "string",
-                    "example": "2024-01-01T00:00:00Z"
+                    "type": "string"
                 },
                 "id": {
-                    "type": "string",
-                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                    "type": "string"
                 },
                 "insurance_exp": {
-                    "type": "string",
-                    "example": "2026-12-31T00:00:00Z"
+                    "type": "string"
                 },
                 "model": {
-                    "type": "string",
-                    "example": "Hiace"
+                    "type": "string"
                 },
                 "plate": {
-                    "type": "string",
-                    "example": "ABC-1234"
+                    "type": "string"
                 },
                 "status": {
-                    "type": "string",
-                    "example": "active"
+                    "type": "string"
                 },
                 "tech_review_exp": {
-                    "type": "string",
-                    "example": "2026-06-30T00:00:00Z"
+                    "type": "string"
                 },
                 "updated_at": {
-                    "type": "string",
-                    "example": "2024-01-01T00:00:00Z"
+                    "type": "string"
                 },
                 "vehicle_type": {
-                    "type": "string",
-                    "example": "van"
+                    "type": "string"
                 },
                 "year": {
-                    "type": "integer",
-                    "example": 2024
+                    "type": "integer"
                 }
             }
         }

@@ -1,37 +1,144 @@
 basePath: /api/v1
 definitions:
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.AddStopRequest:
+    properties:
+      address:
+        type: string
+      est_time:
+        type: string
+      location:
+        $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO'
+      order:
+        type: integer
+      student_id:
+        type: string
+    required:
+    - student_id
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.AuthResponse:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+      user:
+        $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.UserResponse'
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CheckinRequest:
+    properties:
+      action:
+        enum:
+        - board
+        - exit
+        - school_recv
+        type: string
+      location:
+        $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO'
+      student_id:
+        type: string
+    required:
+    - action
+    - student_id
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CheckinResponse:
+    properties:
+      action:
+        type: string
+      id:
+        type: string
+      location:
+        $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO'
+      student_id:
+        type: string
+      timestamp:
+        type: string
+      trip_id:
+        type: string
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CreateRouteRequest:
+    properties:
+      direction:
+        type: string
+      driver_id:
+        type: string
+      name:
+        type: string
+      schedule_time:
+        type: string
+      school_id:
+        type: string
+      vehicle_id:
+        type: string
+    required:
+    - direction
+    - name
+    - schedule_time
+    - school_id
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CreateSchoolRequest:
+    properties:
+      address:
+        type: string
+      email:
+        type: string
+      location:
+        $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO'
+      name:
+        type: string
+      phone:
+        type: string
+    required:
+    - address
+    - name
+    type: object
   github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CreateVehicleRequest:
     properties:
       brand:
-        example: Toyota
         type: string
       capacity:
-        example: 15
         type: integer
       chassis_num:
-        example: WDB9066351L123456
         type: string
       color:
-        example: White
         type: string
       insurance_exp:
-        example: "2026-12-31T00:00:00Z"
+        description: RFC3339
         type: string
       model:
-        example: Hiace
         type: string
       plate:
-        example: ABC-1234
         type: string
       tech_review_exp:
-        example: "2026-06-30T00:00:00Z"
+        description: RFC3339
         type: string
       vehicle_type:
-        example: van
         type: string
       year:
-        example: 2024
         type: integer
+    required:
+    - brand
+    - model
+    - plate
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.DriverResponse:
+    properties:
+      id:
+        type: string
+      license_expiry:
+        type: string
+      license_number:
+        type: string
+      license_type:
+        type: string
+      status:
+        type: string
+      user_id:
+        type: string
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.EndTripRequest:
+    properties:
+      end_location:
+        $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO'
     type: object
   github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse:
     properties:
@@ -39,59 +146,420 @@ definitions:
         example: invalid request body
         type: string
     type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.GuardianResponse:
+    properties:
+      id:
+        type: string
+      is_primary:
+        type: boolean
+      relation:
+        type: string
+      student_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LinkGuardianRequest:
+    properties:
+      is_primary:
+        type: boolean
+      relation:
+        type: string
+      student_id:
+        type: string
+      user_id:
+        type: string
+    required:
+    - relation
+    - student_id
+    - user_id
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListDriversResponse:
+    properties:
+      drivers:
+        items:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.DriverResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListNotificationsResponse:
+    properties:
+      notifications:
+        items:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.NotificationResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListRoutesResponse:
+    properties:
+      routes:
+        items:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RouteResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListSchoolsResponse:
+    properties:
+      schools:
+        items:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.SchoolResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListStudentsResponse:
+    properties:
+      students:
+        items:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.StudentResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListTripsResponse:
+    properties:
+      total:
+        type: integer
+      trips:
+        items:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.TripResponse'
+        type: array
+    type: object
   github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListVehiclesResponse:
     properties:
-      total_count:
-        example: 42
+      total:
         type: integer
       vehicles:
         items:
           $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.VehicleResponse'
         type: array
     type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO:
+    properties:
+      latitude:
+        type: number
+      longitude:
+        type: number
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LoginRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      password:
+        example: secret123
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.NotificationResponse:
+    properties:
+      body:
+        type: string
+      channel:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      sent_at:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+      user_id:
+        type: string
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RegisterDriverRequest:
+    properties:
+      license_expiry:
+        description: RFC3339
+        type: string
+      license_number:
+        type: string
+      license_type:
+        type: string
+      user_id:
+        type: string
+    required:
+    - license_number
+    - user_id
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RegisterRequest:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        minLength: 8
+        type: string
+      phone:
+        type: string
+      role:
+        example: guardian
+        type: string
+    required:
+    - email
+    - first_name
+    - last_name
+    - password
+    - role
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RegisterStudentRequest:
+    properties:
+      first_name:
+        type: string
+      grade:
+        type: string
+      last_name:
+        type: string
+      pickup_address:
+        type: string
+      pickup_location:
+        $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO'
+      school_id:
+        type: string
+    required:
+    - first_name
+    - last_name
+    - school_id
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RouteResponse:
+    properties:
+      direction:
+        type: string
+      driver_id:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+      schedule_time:
+        type: string
+      stops:
+        items:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.StopDTO'
+        type: array
+      vehicle_id:
+        type: string
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.SchoolResponse:
+    properties:
+      address:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      location:
+        $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO'
+      name:
+        type: string
+      phone:
+        type: string
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.SendPushRequest:
+    properties:
+      body:
+        type: string
+      data:
+        additionalProperties:
+          type: string
+        type: object
+      title:
+        type: string
+      user_id:
+        type: string
+    required:
+    - body
+    - title
+    - user_id
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.SendSMSRequest:
+    properties:
+      body:
+        type: string
+      user_id:
+        type: string
+    required:
+    - body
+    - user_id
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.StartTripRequest:
+    properties:
+      route_id:
+        type: string
+    required:
+    - route_id
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.StopDTO:
+    properties:
+      address:
+        type: string
+      est_time:
+        type: string
+      id:
+        type: string
+      location:
+        $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO'
+      order:
+        type: integer
+      student_id:
+        type: string
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.StudentResponse:
+    properties:
+      first_name:
+        type: string
+      grade:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      last_name:
+        type: string
+      pickup_address:
+        type: string
+      pickup_location:
+        $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO'
+      school_id:
+        type: string
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.TripResponse:
+    properties:
+      driver_id:
+        type: string
+      end_location:
+        $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO'
+      ended_at:
+        type: string
+      id:
+        type: string
+      route_id:
+        type: string
+      start_location:
+        $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO'
+      started_at:
+        type: string
+      status:
+        type: string
+      vehicle_id:
+        type: string
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.UpdateDriverRequest:
+    properties:
+      license_expiry:
+        type: string
+      license_number:
+        type: string
+      license_type:
+        type: string
+      status:
+        type: string
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.UpdateRouteRequest:
+    properties:
+      direction:
+        type: string
+      driver_id:
+        type: string
+      name:
+        type: string
+      schedule_time:
+        type: string
+      vehicle_id:
+        type: string
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.UpdateSchoolRequest:
+    properties:
+      address:
+        type: string
+      email:
+        type: string
+      location:
+        $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO'
+      name:
+        type: string
+      phone:
+        type: string
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.UpdateStudentRequest:
+    properties:
+      first_name:
+        type: string
+      grade:
+        type: string
+      last_name:
+        type: string
+      pickup_address:
+        type: string
+      pickup_location:
+        $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LocationDTO'
+    type: object
+  github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.UserResponse:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      role:
+        type: string
+    type: object
   github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.VehicleResponse:
     properties:
       brand:
-        example: Toyota
         type: string
       capacity:
-        example: 15
         type: integer
       chassis_num:
-        example: WDB9066351L123456
         type: string
       color:
-        example: White
         type: string
       created_at:
-        example: "2024-01-01T00:00:00Z"
         type: string
       id:
-        example: 550e8400-e29b-41d4-a716-446655440000
         type: string
       insurance_exp:
-        example: "2026-12-31T00:00:00Z"
         type: string
       model:
-        example: Hiace
         type: string
       plate:
-        example: ABC-1234
         type: string
       status:
-        example: active
         type: string
       tech_review_exp:
-        example: "2026-06-30T00:00:00Z"
         type: string
       updated_at:
-        example: "2024-01-01T00:00:00Z"
         type: string
       vehicle_type:
-        example: van
         type: string
       year:
-        example: 2024
         type: integer
     type: object
 host: localhost:8080
@@ -101,9 +569,707 @@ info:
   title: Gateway Service API
   version: "1.0"
 paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user credentials and return JWT tokens
+      parameters:
+      - description: Login Credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.AuthResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      summary: Login user
+      tags:
+      - auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Get a new access token using a valid refresh token
+      parameters:
+      - description: Refresh Token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.AuthResponse'
+      summary: Refresh tokens
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account (Driver, Guardian, or Admin)
+      parameters:
+      - description: User Registration Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.AuthResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      summary: Register new user
+      tags:
+      - auth
+  /fleet/drivers:
+    get:
+      description: Retrieve a paginated list of drivers
+      parameters:
+      - description: Limit (default 10)
+        in: query
+        name: limit
+        type: integer
+      - description: Offset (default 0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListDriversResponse'
+      security:
+      - BearerAuth: []
+      summary: List drivers
+      tags:
+      - fleet
+    post:
+      consumes:
+      - application/json
+      description: Register a new driver linked to an Auth service user
+      parameters:
+      - description: Register Driver Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RegisterDriverRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.DriverResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Register a driver
+      tags:
+      - fleet
+  /fleet/drivers/{id}:
+    get:
+      description: Retrieve driver details
+      parameters:
+      - description: Driver UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.DriverResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a driver by ID
+      tags:
+      - fleet
+    put:
+      consumes:
+      - application/json
+      description: Modify driver details
+      parameters:
+      - description: Driver UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Driver Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.UpdateDriverRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.DriverResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a driver
+      tags:
+      - fleet
+  /fleet/guardians:
+    post:
+      consumes:
+      - application/json
+      description: Create a relationship between a user (guardian role) and a student
+      parameters:
+      - description: Link Guardian Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.LinkGuardianRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.GuardianResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Link a guardian to a student
+      tags:
+      - fleet
+  /fleet/guardians/{id}:
+    delete:
+      description: Remove the relationship between a guardian and a student
+      parameters:
+      - description: Guardian Relationship UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Unlink a guardian
+      tags:
+      - fleet
+  /fleet/routes:
+    get:
+      description: Retrieve a paginated list of routes
+      parameters:
+      - description: Limit (default 10)
+        in: query
+        name: limit
+        type: integer
+      - description: Offset (default 0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListRoutesResponse'
+      security:
+      - BearerAuth: []
+      summary: List routes
+      tags:
+      - fleet
+    post:
+      consumes:
+      - application/json
+      description: Register a new school transport route
+      parameters:
+      - description: Create Route Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CreateRouteRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RouteResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a route
+      tags:
+      - fleet
+  /fleet/routes/{id}:
+    get:
+      description: Retrieve route info and its stops
+      parameters:
+      - description: Route UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RouteResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get route details
+      tags:
+      - fleet
+    put:
+      consumes:
+      - application/json
+      description: Modify route basic info or assignments
+      parameters:
+      - description: Route UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Route Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.UpdateRouteRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RouteResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a route
+      tags:
+      - fleet
+  /fleet/routes/{id}/stops:
+    get:
+      description: Retrieve all stops for a specific route
+      parameters:
+      - description: Route UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.StopDTO'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Get route stops
+      tags:
+      - fleet
+    post:
+      consumes:
+      - application/json
+      description: Create a new stop for a student in a route
+      parameters:
+      - description: Route UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Add Stop Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.AddStopRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.StopDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add a stop to a route
+      tags:
+      - fleet
+  /fleet/routes/{id}/stops/{stop_id}:
+    delete:
+      description: Delete a stop from a route
+      parameters:
+      - description: Route UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Stop UUID
+        in: path
+        name: stop_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Remove a stop
+      tags:
+      - fleet
+  /fleet/schools:
+    get:
+      description: Retrieve a paginated list of schools
+      parameters:
+      - description: Limit (default 10)
+        in: query
+        name: limit
+        type: integer
+      - description: Offset (default 0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListSchoolsResponse'
+      security:
+      - BearerAuth: []
+      summary: List schools
+      tags:
+      - fleet
+    post:
+      consumes:
+      - application/json
+      description: Register a new school in the system
+      parameters:
+      - description: Create School Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CreateSchoolRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.SchoolResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new school
+      tags:
+      - fleet
+  /fleet/schools/{id}:
+    get:
+      description: Retrieve school details by its UUID
+      parameters:
+      - description: School UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.SchoolResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a school by ID
+      tags:
+      - fleet
+    put:
+      consumes:
+      - application/json
+      description: Modify school details
+      parameters:
+      - description: School UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update School Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.UpdateSchoolRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.SchoolResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a school
+      tags:
+      - fleet
+  /fleet/students:
+    get:
+      description: Retrieve a paginated list of students
+      parameters:
+      - description: Limit (default 10)
+        in: query
+        name: limit
+        type: integer
+      - description: Offset (default 0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListStudentsResponse'
+      security:
+      - BearerAuth: []
+      summary: List students
+      tags:
+      - fleet
+    post:
+      consumes:
+      - application/json
+      description: Create a new student record
+      parameters:
+      - description: Register Student Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.RegisterStudentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.StudentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Register a student
+      tags:
+      - fleet
+  /fleet/students/{id}:
+    delete:
+      description: Mark a student as inactive
+      parameters:
+      - description: Student UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Deactivate a student
+      tags:
+      - fleet
+    get:
+      description: Retrieve student details by UUID
+      parameters:
+      - description: Student UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.StudentResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a student by ID
+      tags:
+      - fleet
+    put:
+      consumes:
+      - application/json
+      description: Modify student details
+      parameters:
+      - description: Student UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Student Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.UpdateStudentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.StudentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a student
+      tags:
+      - fleet
+  /fleet/students/{student_id}/guardians:
+    get:
+      description: List all guardians linked to a specific student
+      parameters:
+      - description: Student UUID
+        in: path
+        name: student_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.GuardianResponse'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Get student guardians
+      tags:
+      - fleet
   /fleet/vehicles:
     get:
       description: Retrieve a paginated list of vehicles in the fleet
+      parameters:
+      - description: Limit (default 10)
+        in: query
+        name: limit
+        type: integer
+      - description: Offset (default 0)
+        in: query
+        name: offset
+        type: integer
       produces:
       - application/json
       responses:
@@ -111,10 +1277,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListVehiclesResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
       security:
       - BearerAuth: []
       summary: List all vehicles
@@ -142,14 +1304,6 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Create a new vehicle
@@ -171,14 +1325,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.VehicleResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -188,6 +1334,331 @@ paths:
       summary: Get a vehicle by ID
       tags:
       - fleet
+  /notifications:
+    get:
+      description: Retrieve a paginated list of notification logs
+      parameters:
+      - description: Limit (default 10)
+        in: query
+        name: limit
+        type: integer
+      - description: Offset (default 0)
+        in: query
+        name: offset
+        type: integer
+      - description: Filter by User ID
+        in: query
+        name: user_id
+        type: string
+      - description: Filter by Status
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListNotificationsResponse'
+      security:
+      - BearerAuth: []
+      summary: List notifications
+      tags:
+      - notifications
+  /notifications/{id}:
+    get:
+      description: Retrieve a notification log entry by UUID
+      parameters:
+      - description: Notification UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.NotificationResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get notification details
+      tags:
+      - notifications
+  /notifications/push:
+    post:
+      consumes:
+      - application/json
+      description: Enqueue a new push notification via FCM
+      parameters:
+      - description: Push Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.SendPushRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.NotificationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Send a push notification
+      tags:
+      - notifications
+  /notifications/retry:
+    post:
+      description: Manually trigger a retry for all notifications in 'failed' status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Retry failed notifications
+      tags:
+      - notifications
+  /notifications/sms:
+    post:
+      consumes:
+      - application/json
+      description: Enqueue a new SMS via Twilio
+      parameters:
+      - description: SMS Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.SendSMSRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.NotificationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Send an SMS notification
+      tags:
+      - notifications
+  /trips:
+    get:
+      description: Paginated list of trips, filterable by status or route
+      parameters:
+      - description: Limit results (default 10)
+        in: query
+        name: limit
+        type: integer
+      - description: Offset results (default 0)
+        in: query
+        name: offset
+        type: integer
+      - description: Filter by status
+        in: query
+        name: status
+        type: string
+      - description: Filter by Route ID
+        in: query
+        name: route_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ListTripsResponse'
+      security:
+      - BearerAuth: []
+      summary: List trips
+      tags:
+      - trips
+    post:
+      consumes:
+      - application/json
+      description: Create a new trip instance based on a route ID
+      parameters:
+      - description: Start Trip Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.StartTripRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.TripResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Start a new trip
+      tags:
+      - trips
+  /trips/{id}:
+    get:
+      description: Retrieve full trip data by UUID
+      parameters:
+      - description: Trip UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.TripResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get trip details
+      tags:
+      - trips
+  /trips/{id}/checkins:
+    get:
+      description: Retrieve all student check-in events for a specific trip
+      parameters:
+      - description: Trip UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CheckinResponse'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Get trip check-ins
+      tags:
+      - trips
+    post:
+      consumes:
+      - application/json
+      description: Register a boarding/exiting event for a student on a trip
+      parameters:
+      - description: Trip UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Checkin Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CheckinRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.CheckinResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Student check-in
+      tags:
+      - trips
+  /trips/{id}/end:
+    put:
+      consumes:
+      - application/json
+      description: Mark an in-progress trip as completed
+      parameters:
+      - description: Trip UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: End Trip Request
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.EndTripRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.TripResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: End a trip
+      tags:
+      - trips
+  /trips/active:
+    get:
+      description: Retrieve all trips currently in progress
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_fercho_school-tracking_services_gateway_internal_infrastructure_api_dtos.TripResponse'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: List active trips
+      tags:
+      - trips
 securityDefinitions:
   BearerAuth:
     description: 'JWT token in the format: Bearer {token}'
